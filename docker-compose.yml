@@ -1,0 +1,13 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: average-btc-address-buy-price:latest
+    container_name: average-btc-address-buy-price
+    expose:
+      - 3000
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=${PORT}
