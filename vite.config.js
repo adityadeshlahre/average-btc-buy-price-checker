@@ -21,4 +21,16 @@ export default defineConfig({
 			"@": resolve(__dirname, "./src"),
 		},
 	},
+	preview: {
+		host: true,
+		strictPort: true,
+		port: 3000,
+		allowedHosts: ["all"],
+	},
+	server: {
+		port: 3000,
+	},
+	build: {
+		outDir: "dist",
+	},
 });
