@@ -25,7 +25,7 @@ export default defineConfig({
 		host: true,
 		strictPort: true,
 		port: 3000,
-		allowedHosts: ["all"],
+		allowedHosts: ["average-btc-address-buy-price.onrender.com"],
 	},
 	server: {
 		port: 3000,
