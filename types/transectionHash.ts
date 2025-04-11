@@ -1,4 +1,4 @@
-export interface TransectionHash {
+export interface TransectionHashItems {
     block_hash: string
     block_height: number
     block_index: number
