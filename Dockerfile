@@ -31,6 +31,7 @@ COPY .gitignore .gitignore
 # COPY --from=builder /app/.vinxi .
 # COPY turbo.json turbo.json
 COPY --from=builder /app/package.json /app/package.json
+COPY --from=builder /app/vite.config.js /app/vite.config.js
 COPY --from=builder /app/dist /app/dist
 
 RUN pnpm install --prod
