@@ -22,12 +22,12 @@ export default defineConfig({
 		},
 	},
 	preview: {
-		host: true,
-		strictPort: true,
+		host: "0.0.0.0",
 		port: 3000,
 		allowedHosts: ["average-btc-address-buy-price.onrender.com"],
 	},
 	server: {
+		host: true,
 		port: 3000,
 	},
 	build: {
