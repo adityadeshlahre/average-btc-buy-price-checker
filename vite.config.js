@@ -25,15 +25,14 @@ export default defineConfig({
 	preview: {
 		host: "0.0.0.0",
 		port: 3000,
-		allowedHosts: [
-			"average-btc-address-buy-price.onrender.com",
-			"localhost",
-			".onrender.com",
-		],
+		strictPort: true,
+		allowedHosts: "all",
 	},
 	server: {
 		host: true,
 		port: 3000,
+		strictPort: true,
+		cors: true,
 	},
 	build: {
 		outDir: "dist",
