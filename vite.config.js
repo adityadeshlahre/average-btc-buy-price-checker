@@ -26,6 +26,7 @@ export default defineConfig({
 		host: "0.0.0.0",
 		port: 3000,
 		strictPort: true,
+		cors: true,
 		allowedHosts: "all",
 	},
 	server: {
@@ -33,6 +34,7 @@ export default defineConfig({
 		port: 3000,
 		strictPort: true,
 		cors: true,
+		allowedHosts: "all",
 	},
 	build: {
 		outDir: "dist",
