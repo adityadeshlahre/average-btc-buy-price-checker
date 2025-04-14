@@ -19,11 +19,11 @@ export default defineConfig({
 		},
 	},
 	preview: {
-		host: "0.0.0.0",
+		host: true,
 		port: 3000,
 		strictPort: true,
 		cors: true,
-		allowedHosts: true,
+		allowedHosts: ["average-btc-address-buy-price.onrender.com"],
 	},
 	server: {
 		host: true,
