@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Store, useStore } from "@tanstack/react-store";
 import { useEffect } from "react";
@@ -84,7 +85,17 @@ const updateTimeStampsAndPricesStore = (
 	}));
 };
 
+const queryClient = new QueryClient();
+
 function App() {
+	return (
+		<QueryClientProvider client={queryClient}>
+			<Render />
+		</QueryClientProvider>
+	);
+}
+
+function Render() {
 	const { address } = useStore(currentStore);
 	const { AddressTransectionItem } = useStore(getAddressTxsStore);
 	const { transectionHashIds } = useStore(TransectionDetailsFromHashIds);

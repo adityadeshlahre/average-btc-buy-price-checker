@@ -1,10 +1,13 @@
 import mempool from "@mempool/mempool.js";
 import axios from "axios";
+// import { useQueryClient } from "@tanstack/react-query";
 import type { AddressTransectionItem } from "types/addressTransections";
 import type { TransectionHashItems } from "types/transectionHash";
 const {
   bitcoin: { addresses },
 } = mempool();
+
+// const queryClient = useQueryClient();
 
 export const getAddressTxs = async (
   address: string,
