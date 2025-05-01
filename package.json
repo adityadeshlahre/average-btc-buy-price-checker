@@ -19,7 +19,7 @@
     "@tanstack/react-router-devtools": "^1.115.3",
     "@tanstack/react-store": "^0.7.0",
     "@tanstack/router-plugin": "^1.115.3",
-    "@types/node": "^22.14.1",
+    "@types/node": "^22.15.3",
     "axios": "^1.8.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
