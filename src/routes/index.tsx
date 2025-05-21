@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Store, useStore } from "@tanstack/react-store";
+import { useGetTransactionsFromAddress } from "hooks/query/useQuery";
 import { useEffect } from "react";
 import type { AddressTransectionItem } from "types/addressTransections";
 import {
@@ -97,6 +98,9 @@ function App() {
 }
 
 function Render() {
+	const { handleGetTransactionsFromAddress } = useGetTransactionsFromAddress(
+		currentStore.state.address ?? "",
+	);
 	const { address } = useStore(currentStore);
 	const { AddressTransectionItem } = useStore(getAddressTxsStore);
 	const { transectionHashIds } = useStore(TransectionDetailsFromHashIds);
@@ -184,6 +188,7 @@ function Render() {
 						updateGetAddressTxsStore(
 							await getAddressTxs(currentStore.state.address ?? ""),
 						);
+						handleGetTransactionsFromAddress();
 					}}
 				>
 					Check

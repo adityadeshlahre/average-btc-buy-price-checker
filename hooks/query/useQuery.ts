@@ -5,7 +5,10 @@ import { queryKey } from "hooks/queryKey";
 export const useGetTransactionsFromAddress = (address : string) => {
 
     const handleGetTransactionsFromAddress = async () => {
-        const response = await axios(`https://api.example.com/transactions/${address}`);
+        if (!address) {
+            throw new Error('Address is required');
+        }
+        const response = await axios(`https://mempool.space/api/address/${address}/txs`);
         if (response.status !== 200) {
             throw new Error('Network response was not ok');
         }
