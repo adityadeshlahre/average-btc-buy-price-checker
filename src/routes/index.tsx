@@ -98,14 +98,13 @@ function App() {
 }
 
 function Render() {
-	const { handleGetTransactionsFromAddress } = useGetTransactionsFromAddress(
-		currentStore.state.address ?? "",
-	);
 	const { address } = useStore(currentStore);
 	const { AddressTransectionItem } = useStore(getAddressTxsStore);
 	const { transectionHashIds } = useStore(TransectionDetailsFromHashIds);
 	const { timeStamps, prices } = useStore(timeStampsAndPricesStore);
-
+	// const { handleGetTransactionsFromAddress } = useGetTransactionsFromAddress(
+	// 	currentStore.state.address ?? "",
+	// );
 	useEffect(() => {
 		const fetchDetails = async () => {
 			if (AddressTransectionItem.length > 0) {
@@ -188,7 +187,7 @@ function Render() {
 						updateGetAddressTxsStore(
 							await getAddressTxs(currentStore.state.address ?? ""),
 						);
-						handleGetTransactionsFromAddress();
+						// handleGetTransactionsFromAddress();
 					}}
 				>
 					Check
