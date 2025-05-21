@@ -3,7 +3,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Store, useStore } from "@tanstack/react-store";
 import { useEffect } from "react";
 import type { AddressTransectionItem } from "types/addressTransections";
-import type { TransectionHashItems } from "types/transectionHash";
 import {
 	getAddressTxs,
 	getPriceAtTimeStamp,
@@ -11,6 +10,8 @@ import {
 	getTransectionFromHashId,
 } from "../../utils/lib";
 import logo from "../logo.svg";
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const Route = createFileRoute("/")({
 	component: App,
@@ -29,7 +30,7 @@ export const getAddressTxsStore = new Store<{
 });
 
 export const TransectionDetailsFromHashIds = new Store<{
-	transectionHashIds: TransectionHashItems[];
+	transectionHashIds: AddressTransectionItem[];
 }>({
 	transectionHashIds: [],
 });
@@ -60,7 +61,7 @@ const updateGetAddressTxsStore = (transections: AddressTransectionItem[]) => {
 };
 
 const updateTransectionDetailsFromHashIds = (
-	transections: TransectionHashItems[],
+	transections: AddressTransectionItem[],
 ) => {
 	TransectionDetailsFromHashIds.setState((prev) => ({
 		...prev,
@@ -104,13 +105,14 @@ function Render() {
 	useEffect(() => {
 		const fetchDetails = async () => {
 			if (AddressTransectionItem.length > 0) {
-				const details = (
-					await Promise.all(
-						AddressTransectionItem.map((tx) =>
-							getTransectionFromHashId(tx.txid),
-						),
-					)
-				).flat();
+				const details: AddressTransectionItem[] = [];
+
+				for (const tx of AddressTransectionItem) {
+					await sleep(2000);
+					const detail = await getTransectionFromHashId(tx.txid);
+					details.push(...(Array.isArray(detail) ? detail : [detail]));
+				}
+
 				updateTransectionDetailsFromHashIds(details);
 			}
 		};
@@ -123,9 +125,13 @@ function Render() {
 			if (transectionHashIds.length > 0) {
 				for (const transection of transectionHashIds) {
 					if (transection && !Array.isArray(transection)) {
+						await sleep(2000);
+						console.log("transection", transection.txid);
 						const timeStamps: number = await getTimeStampsFromHash(
-							transection.block_hash,
+							transection.txid,
 						);
+						await sleep(2000);
+						console.log("timeStamps", timeStamps);
 						const { price, timeStamp } = await getPriceAtTimeStamp(timeStamps);
 
 						updateTimeStampsAndPricesStore([timeStamp], [price]);
@@ -134,13 +140,10 @@ function Render() {
 			}
 		};
 
-		fetchTimestamps();
+		setTimeout(() => {
+			fetchTimestamps();
+		}, 2000);
 	}, [transectionHashIds]);
-
-	useEffect(() => {
-		console.log("Time Stamps: ", timeStamps);
-		console.log("Prices: ", prices);
-	}, [timeStamps, prices]);
 
 	return (
 		<div className="text-center">
@@ -167,7 +170,8 @@ function Render() {
 						type="button"
 						className="p-2 m-2 font-semibold bg-teal-500 text-white rounded hover:bg-teal-700"
 						onClick={() => {
-							updateStore("1J6PYEzr4CUoGbnXrELyHszoTSz3wCsCaj");
+							updateStore("bc1q0vae9k5fhde4l7dr79d37u7cuaezjqarlfraek");
+							// updateStore("bc1qhyje6fsteyavalgy5pmnf4wgpqe74vdg3nr0s0");
 						}}
 					>
 						Paste Example Address
@@ -184,6 +188,14 @@ function Render() {
 				>
 					Check
 				</button>
+				<span className="flex flex-col items-center">
+					{timeStamps.length > 0 &&
+						timeStamps.map((timeStamp, index) => (
+							<div key={`${timeStamp}+1`} className="m-2">
+								{`Time Stamp: ${timeStamp} Price: ${prices[index]}`}
+							</div>
+						))}
+				</span>
 				<button
 					type="button"
 					onClick={async () => {
@@ -195,6 +207,14 @@ function Render() {
 					}}
 				>
 					test
+				</button>
+				<button
+					type="button"
+					onClick={async () => {
+						console.log(await getPriceAtTimeStamp(1742319847));
+					}}
+				>
+					test time stamp
 				</button>
 			</header>
 		</div>

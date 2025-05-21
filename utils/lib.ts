@@ -2,7 +2,7 @@ import mempool from "@mempool/mempool.js";
 import axios from "axios";
 // import { useQueryClient } from "@tanstack/react-query";
 import type { AddressTransectionItem } from "types/addressTransections";
-import type { TransectionHashItems } from "types/transectionHash";
+import type { coinMarketCap } from "types/coinMarketCap";
 const {
   bitcoin: { addresses },
 } = mempool();
@@ -17,19 +17,22 @@ export const getAddressTxs = async (
 };
 
 // const transectionURL: string = "https://api.blockcypher.com/v1/btc/main/txs/";
-const transectionURL: string = "https://www.blockchain.com/explorer/transactions/btc/";
+// const transectionURL: string = "https://www.blockchain.com/explorer/transactions/btc/";
+// const transectionURL: string = "https://blockstream.info/api/blocks/";
+const transectionURL: string = "https://mempool.space/api/tx/";
+
 
 export const getTransectionFromHashId = async (
   hashId: string | string[],
-): Promise<TransectionHashItems[]> => {
-  const results: TransectionHashItems[] = [];
+): Promise<AddressTransectionItem[]> => {
+  const results: AddressTransectionItem[] = [];
 
   if (Array.isArray(hashId)) {
     for (const hash of hashId) {
       try {
         await new Promise((r) => setTimeout(r, 1000));
         const res = await axios.get(`${transectionURL}${hash}`);
-        results.push(res.data as TransectionHashItems);
+        results.push(res.data as AddressTransectionItem);
         await new Promise((r) => setTimeout(r, 1000));
       } catch (err) {
         console.error(`Failed to fetch transaction for hash: ${hash}`, err);
@@ -38,46 +41,59 @@ export const getTransectionFromHashId = async (
     return results;
   } else {
     const response = await axios.get(`${transectionURL}${hashId}`);
-    return [response.data as TransectionHashItems];
+    return [response.data as AddressTransectionItem];
   }
 };
 
 export const getTimeStampsFromHash = async (hash: string): Promise<number> => {
-  const transection = await getTransectionFromHashId(hash);
-  if (
-    transection &&
-    !Array.isArray(transection) &&
-    (transection as TransectionHashItems).confirmed
-  ) {
-    const date = new Date((transection as TransectionHashItems).confirmed);
+  const transections: AddressTransectionItem[] = await getTransectionFromHashId(hash);
+
+  if (transections.length > 0) {
+    const date = new Date(transections[0].status.block_time);
+    console.log("date", date);
     const timeStamp = Math.floor(date.getTime() / 1000);
     return timeStamp;
   }
-  throw new Error("Transection not found");
+
+  throw new Error("Transaction not found");
 };
 
-const priceTimeStampUrl: string =
-  "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=usd&"; //from=1712456361&to=1712459961";
+// const priceTimeStampUrl: string =
+//   "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=usd&"; //from=1712456361&to=1712459961";
+
+const priceTimeStampUrl: string = "https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/historical"
 
 export const getPriceAtTimeStamp = async (
   timeStamp: number,
 ): Promise<{ timeStamp: Date | number; price: string }> => {
-  const from = timeStamp - 1800;
-  const to = timeStamp + 1800;
 
-  const response = await axios.get(`${priceTimeStampUrl}from=${from}&to=${to}`);
+  console.log("timeStamp", timeStamp);
+  const from = new Date((timeStamp - 1800) * 1000).toISOString();
+  const to = new Date((timeStamp + 1800) * 1000).toISOString();
 
-  const data = response.data;
+  const symbol = "BTC";
+  const url = `${priceTimeStampUrl}?symbol=${symbol}&interval=5m&time_start=${from}&time_end=${to}`;
 
-  const closest = data.prices.reduce((prev: number[], curr: number[]) => {
-    return Math.abs(curr[0] - timeStamp) < Math.abs(prev[0] - timeStamp)
-      ? curr
-      : prev;
+  if (!import.meta.env.VITE_COINMARKETCAP_API_KEY) return { timeStamp: 0, price: "0" };
+  const response = await axios.get(url,{
+    headers: {
+      "X-CMC_PRO_API_KEY": import.meta.env.VITE_COINMARKETCAP_API_KEY,
+    },
+  });
+
+  const data : coinMarketCap = response.data;
+
+  const quotes = data.data.quotes;
+
+  const closest = quotes.reduce((prev, curr) => {
+    const prevDiff = Math.abs(new Date(prev.timestamp).getTime() / 1000 - timeStamp);
+    const currDiff = Math.abs(new Date(curr.timestamp).getTime() / 1000 - timeStamp);
+    return currDiff < prevDiff ? curr : prev;
   });
 
   return {
-    timeStamp: new Date(closest[0]),
-    price: closest[1],
+    timeStamp: new Date(closest.timestamp),
+    price: closest.quote.USD.price.toFixed(2),
   };
 };
 
