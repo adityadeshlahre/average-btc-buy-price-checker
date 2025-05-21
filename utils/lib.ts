@@ -73,8 +73,6 @@ export const getPriceAtTimeStamp = async (
 
   const response = await axios.get('/api/get-btc-history', {
     params: {
-      symbol: "BTC",
-      interval: "5m",
       time_start: from,
       time_end: to,
     },
