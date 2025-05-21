@@ -61,7 +61,7 @@ export const getTimeStampsFromHash = async (hash: string): Promise<number> => {
 // const priceTimeStampUrl: string =
 //   "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=usd&"; //from=1712456361&to=1712459961";
 
-const priceTimeStampUrl: string = "https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/historical"
+// const priceTimeStampUrl: string = "https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/historical"
 
 export const getPriceAtTimeStamp = async (
   timeStamp: number,
@@ -71,13 +71,12 @@ export const getPriceAtTimeStamp = async (
   const from = new Date((timeStamp - 1800) * 1000).toISOString();
   const to = new Date((timeStamp + 1800) * 1000).toISOString();
 
-  const symbol = "BTC";
-  const url = `${priceTimeStampUrl}?symbol=${symbol}&interval=5m&time_start=${from}&time_end=${to}`;
-
-  if (!import.meta.env.VITE_COINMARKETCAP_API_KEY) return { timeStamp: 0, price: "0" };
-  const response = await axios.get(url,{
-    headers: {
-      "X-CMC_PRO_API_KEY": import.meta.env.VITE_COINMARKETCAP_API_KEY,
+  const response = await axios.get('/api/get-btc-history', {
+    params: {
+      symbol: "BTC",
+      interval: "5m",
+      time_start: from,
+      time_end: to,
     },
   });
 
