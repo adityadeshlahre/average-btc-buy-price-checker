@@ -15,7 +15,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 					time_end,
 				},
 				headers: {
-					'X-CMC_PRO_API_KEY': import.meta.env.VITE_COINMARKETCAP_API_KEY!,
+					'X-CMC_PRO_API_KEY': process.env.VITE_COINMARKETCAP_API_KEY!,
 				},
 			}
 		);
