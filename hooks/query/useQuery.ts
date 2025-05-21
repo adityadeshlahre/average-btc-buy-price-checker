@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { queryKey } from "hooks/queryKey";
+import { queryKey } from "./../queryKey";
 
 export const useGetTransactionsFromAddress = (address : string) => {
 

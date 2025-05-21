@@ -1,7 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Store, useStore } from "@tanstack/react-store";
-import { useGetTransactionsFromAddress } from "hooks/query/useQuery";
 import { useEffect } from "react";
 import type { AddressTransectionItem } from "types/addressTransections";
 import {
@@ -11,6 +10,7 @@ import {
 	getTransectionFromHashId,
 } from "../../utils/lib";
 import logo from "../logo.svg";
+import { useGetTransactionsFromAddress } from "./../../hooks/query/useQuery";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -102,9 +102,9 @@ function Render() {
 	const { AddressTransectionItem } = useStore(getAddressTxsStore);
 	const { transectionHashIds } = useStore(TransectionDetailsFromHashIds);
 	const { timeStamps, prices } = useStore(timeStampsAndPricesStore);
-	// const { handleGetTransactionsFromAddress } = useGetTransactionsFromAddress(
-	// 	currentStore.state.address ?? "",
-	// );
+	const { handleGetTransactionsFromAddress } = useGetTransactionsFromAddress(
+		currentStore.state.address ?? "",
+	);
 	useEffect(() => {
 		const fetchDetails = async () => {
 			if (AddressTransectionItem.length > 0) {
@@ -187,7 +187,7 @@ function Render() {
 						updateGetAddressTxsStore(
 							await getAddressTxs(currentStore.state.address ?? ""),
 						);
-						// handleGetTransactionsFromAddress();
+						handleGetTransactionsFromAddress();
 					}}
 				>
 					Check
